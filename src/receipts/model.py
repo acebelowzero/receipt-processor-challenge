@@ -47,3 +47,10 @@ class Item(SQLModel, table=True):
     shortDescription: str = Field()
     price: float = Field()
     receipt: Receipt | None = Relationship(back_populates="items")
+
+
+class Point(SQLModel, table=True):
+    idx: int = Field(primary_key=True, index=True)
+    id: UUID4 = Field(foreign_key="receipt.id")
+    points: int = Field()
+

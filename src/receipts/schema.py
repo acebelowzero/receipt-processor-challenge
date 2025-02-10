@@ -37,3 +37,7 @@ class Receipt(BaseModel):
 
 class CreateReceiptResponse(BaseModel):
     id: UUID4 = Field
+
+
+class PointsResponse(BaseModel):
+    points: int = Field()
