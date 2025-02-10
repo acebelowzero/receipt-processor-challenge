@@ -14,6 +14,9 @@ class Settings(BaseSettings):
 
     # Main
     ENVIRONMENT: Literal["development", "production", "testing"] = "development"
+    
+    #db
+    DATABASE_URI: str = "sqlite:///app.db"
 
     # Logging
     LOG_CONFIG_PATH: str = "conf/logging.conf"

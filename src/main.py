@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from src.utils.config import settings
 from src.utils.logging import setup_logging
 from fastapi.concurrency import asynccontextmanager
+from src.database import db
 
 # routing
 from src.receipts.controller import router as receipt_router
@@ -15,6 +16,7 @@ logger = logging.getLogger(settings.ENVIRONMENT)
 def on_startup():
     """Runs on server startup"""
     setup_logging()
+    db.db_setup()
     
     logger.info("Server is running.")
     

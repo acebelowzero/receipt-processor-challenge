@@ -1,8 +1,9 @@
 from pydantic import BaseModel, Field, UUID4
+from sqlmodel import SQLModel
 from datetime import date, time
 from typing import List
 import uuid
-class Items(BaseModel):
+class Items(SQLModel):
     """Item schema
 
     Attributes:
@@ -16,7 +17,7 @@ class Items(BaseModel):
     price: float = Field()
 
 
-class Receipt(BaseModel):
+class Receipt(SQLModel):
     """
     Receipt Schema
     Attributes:
