@@ -3,6 +3,10 @@ from src.utils.config import settings
 from src.utils.logging import setup_logging
 from fastapi.concurrency import asynccontextmanager
 
+# routing
+from src.receipts.controller import router as receipt_router
+
+
 import logging
 
 
@@ -28,4 +32,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+
+app.include_router(receipt_router)
 
