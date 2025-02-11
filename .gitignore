@@ -173,3 +173,4 @@ cython_debug/
 *.db
 app.db
 *.db
+**/.DS_Store
