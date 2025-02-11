@@ -37,7 +37,7 @@ cd docker
 
 4. Run database
 ```bash
-docker-compose up -d
+docker-compose --env-file ../.env  up  
 ```
 
 ## Testing
