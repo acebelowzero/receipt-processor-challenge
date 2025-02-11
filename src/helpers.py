@@ -3,6 +3,7 @@ Global helper functions
 """
 
 import re
+from datetime import date, time, datetime, timedelta
 
 
 def remove_nonalphanumeric_characters(string: str) -> str:
@@ -40,3 +41,8 @@ def is_odd(num: int):
     if num % 2 == 0:
         return False
     return True
+
+
+def convert_24_to_12_hour(time: time):
+    dummy_date = datetime.combine(date.today(), time)
+    return dummy_date - timedelta(hours=12)

@@ -6,7 +6,7 @@ from src.utils.config import settings
 from sqlalchemy.orm import Session
 from src.receipts import schema
 from src.receipts import model
-from datetime import time
+from datetime import time, timedelta, datetime
 from .receipt_repo import receipt_repo
 from .point_repo import point_repo
 from src.repo.exceptions import ElementNotFoundError
@@ -113,38 +113,55 @@ class ReceiptService:
         if receipt.retailer:
             # add one point for every alphanumeric character in the string
             retailer = helpers.remove_nonalphanumeric_characters(receipt.retailer)
-            points += len(retailer) * 1
+            points += len(retailer)
+            logger.debug(
+                f"{points} points - retailer name has {len(retailer)} characters"
+            )
 
         if helpers.check_if_whole_number(receipt.total):
             # add 50 points if total is round dollar amount
             logger.debug("Receipt Total %s is a round dollar amount", receipt.total)
+            logger.debug("50 points - total is a rounded dollar")
             points += 50
 
         # check if receipt total is a multiple 0.25
         if helpers.check_if_whole_number(receipt.total / 0.25):
-            logger.debug("Receipt Total %s is a multiple of 0.25", receipt.total)
             points += 25
+            logger.debug("25 points - total is a multiple of 0.25")
 
         # get total groups of two and multiplies by 5
         groups_of_two = helpers.count_groups_of_two(receipt.items)
-        points += groups_of_two * 5
+        group_points = groups_of_two * 5
+        points += group_points
+        logger.debug(
+            f"{group_points} - {len(receipt.items)} items ({groups_of_two} @ 5 points each)"
+        )
 
         # checks if item description are multiples 3
         for item in receipt.items:
             desc = item.shortDescription.strip()
-            desc_ = desc.split(" ")
-            if helpers.check_if_whole_number(len(desc_) / 3):
-                price = math.ceil(item.price * 0.2)
-                points += price
+            if helpers.check_if_whole_number(len(desc) / 3):
+                price_ = item.price * 0.2
+                points += math.ceil(price_)
+                logger.debug(
+                    f"3 points - {item.shortDescription} is {len(desc)} characters (a multiple of 3), items price of {item.price} * 0.2 = {math.ceil(price_)}"
+                )
 
         # checks if day is odd
         if helpers.is_odd(receipt.purchaseDate.day):
-            points += 5
+            points += 6
+            logger.debug("6 points - purchase day is odd")
 
         if (
             receipt.purchaseTime > AFTER_TIME_MODIFIER
             and receipt.purchaseTime < BEFORE_TIME_MODIFIER
         ):
             points += 10
-
+            # for logging purposes
+            converted_time = helpers.convert_24_to_12_hour(receipt.purchaseTime)
+            am_pm = receipt.purchaseTime.strftime("%I:%M %p")  # gets am or pm
+            logger.debug(
+                f"10 points - {converted_time.time()}{am_pm} is between {helpers.convert_24_to_12_hour(AFTER_TIME_MODIFIER).time()}pm and {helpers.convert_24_to_12_hour(BEFORE_TIME_MODIFIER).time()}pm"
+            )
+        logger.debug(f"Total points - {points}")
         return points
