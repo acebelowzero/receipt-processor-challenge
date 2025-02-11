@@ -1,10 +1,9 @@
-from pydantic import BaseModel, UUID4
+from pydantic import UUID4
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import date, time
 from typing import List
 import uuid
 
-from sqlalchemy import ForeignKey
 
 
 class Receipt(SQLModel, table=True):

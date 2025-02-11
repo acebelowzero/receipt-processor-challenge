@@ -7,10 +7,9 @@ from sqlalchemy.orm import Session
 from src.receipts import schema
 from src.receipts import model
 from datetime import time
-from sqlite3 import IntegrityError
 from .receipt_repo import receipt_repo
 from .point_repo import point_repo
-from src.repo.exceptions import ElementNotFoundError, DatabaseConnectionError
+from src.repo.exceptions import ElementNotFoundError
 from .exceptions import ReceiptServiceError
 from pydantic import UUID4
 from src import helpers

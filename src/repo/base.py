@@ -1,4 +1,3 @@
-from sqlite3 import IntegrityError
 
 from sqlmodel import SQLModel
 from typing import Generic, TypeVar

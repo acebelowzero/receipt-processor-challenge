@@ -1,10 +1,8 @@
 import logging
 from src.utils.config import settings
 from typing import Annotated
-from fastapi import APIRouter, Request, Depends, Path
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Path
 from src.receipts import schema
-from src.receipts import model
 from src.database import db
 from sqlalchemy.orm import Session
 from .service import ReceiptService
@@ -39,7 +37,7 @@ async def get_receipt_points_by_id(
     try:
         points = ReceiptService.get_points_by_id(db_conn, receipt_id)
         return points
-    except ElementNotFoundError as e:
+    except ElementNotFoundError:
         raise exceptions.HTTP404NotFoundError("No receipt found for that ID.")
     except Exception as e:
         logger.error(e)

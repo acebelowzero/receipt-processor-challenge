@@ -5,7 +5,6 @@ from fastapi import FastAPI, Request
 from http import HTTPStatus
 from src.exceptions import exceptions as HTTPExceptions
 from src.repo import exceptions as RepoExceptions
-from pydantic import ValidationError
 from fastapi.exceptions import RequestValidationError
 
 
@@ -29,11 +28,6 @@ def setup_api_exceptions(app: FastAPI):
     @app.exception_handler(RequestValidationError)
     async def handle_validation_error(request: Request, exc: Exception) -> JSONResponse:
         logger.error("request could not be processed: %s", exc)
-        error_message = ""
-        # if exc.errors():
-        #     error_message = (
-        #         f"{exc.errors()[0].get('msg')}, {exc.errors()[0].get('loc')}"
-        #     )
 
         code = HTTPStatus.BAD_REQUEST
         return JSONResponse(
