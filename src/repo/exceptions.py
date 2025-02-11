@@ -11,3 +11,7 @@ class ElementNotFoundError(exceptions.BaseException):
 
 class DatabaseConnectionError(exceptions.BaseException):
     """Raised when a database connection error occurs."""
+
+    def __init__(self, message: str = "Database connection issue"):
+        self.message = message
+        super().__init__(message=self.message)

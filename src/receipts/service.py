@@ -7,13 +7,14 @@ from sqlalchemy.orm import Session
 from src.receipts import schema
 from src.receipts import model
 from datetime import time
-
+from sqlite3 import IntegrityError
 from .receipt_repo import receipt_repo
 from .point_repo import point_repo
-from src.repo.exceptions import ElementNotFoundError
+from src.repo.exceptions import ElementNotFoundError, DatabaseConnectionError
 from .exceptions import ReceiptServiceError
 from pydantic import UUID4
 from src import helpers
+from src.exceptions import exceptions
 
 logger = logging.getLogger(settings.ENVIRONMENT)
 
@@ -33,7 +34,6 @@ class ReceiptService:
                 UUID: Receipt ID
         """
         try:
-            points = ReceiptService._process_receipt(receipt)
             db_receipt = model.Receipt(
                 id=receipt.id,
                 retailer=receipt.retailer,
@@ -52,11 +52,11 @@ class ReceiptService:
                 )
                 receipt_repo.create(db_conn, db_item)
                 logger.debug("Item created: %s", db_item.idx)
-
         except Exception as e:
-            logger.exception("Error occured while creating receipt")
-            raise ReceiptServiceError from e
+            logger.error(e)
+            raise exceptions.HTTP400BadRequestError from e
         try:
+            points = ReceiptService._process_receipt(receipt)
             db_points = model.Point(id=receipt.id, points=points)
             point_repo.create(db_conn, db_points)
         except Exception as e:
@@ -138,6 +138,7 @@ class ReceiptService:
                 price = math.ceil(item.price * 0.2)
                 points += price
 
+        # checks if day is odd
         if helpers.is_odd(receipt.purchaseDate.day):
             points += 5
 

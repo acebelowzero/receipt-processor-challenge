@@ -1,3 +1,5 @@
+from sqlite3 import IntegrityError
+
 from sqlmodel import SQLModel
 from typing import Generic, TypeVar
 from src.utils.config import settings
@@ -42,8 +44,12 @@ class RepoBase(Generic[T]):
             db_conn.commit()
         except OperationalError:
             db_conn.rollback()
-            logger.exception("Failed to create %s object", self.model)
+            logger.error("Failed to create %s object", self.model)
             raise
+        except Exception as e:
+            db_conn.rollback()
+            logger.error(e)
+            raise DatabaseConnectionError("Database error")
         else:
             return data
 

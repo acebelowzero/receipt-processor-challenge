@@ -25,8 +25,8 @@ def on_startup():
 
 def on_shutdown():
     """Runs on server teardown"""
-    pass
     logger.info("Server teardown")
+    pass
 
 
 @asynccontextmanager
@@ -39,8 +39,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+# setup exception handler
 exception_handlers.setup_api_exceptions(app)
 
 app.include_router(receipt_router)
-
-# setup exception handler

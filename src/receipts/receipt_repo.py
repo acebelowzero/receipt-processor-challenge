@@ -6,5 +6,4 @@ class ReceiptRepo(RepoBase[Receipt]):
     """Receipt Repo"""
 
 
-
 receipt_repo = ReceiptRepo(Receipt)

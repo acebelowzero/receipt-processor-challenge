@@ -7,7 +7,6 @@ import uuid
 from sqlalchemy import ForeignKey
 
 
-
 class Receipt(SQLModel, table=True):
     """
     Receipt Schema
@@ -19,15 +18,13 @@ class Receipt(SQLModel, table=True):
         items (list[items]): items purchased
         total (float): total spent
     """
+
     idx: int = Field(primary_key=True, index=True)
-    id: UUID4 = Field(default_factory=uuid.uuid4)
+    id: UUID4 = Field(default_factory=uuid.uuid4, sa_column_kwargs={"unique": True})
     retailer: str = Field()
     purchaseDate: date = Field()
     purchaseTime: time = Field()
-    items: List["Item"] = Relationship(
-        back_populates="receipt",
-        cascade_delete=True
-    )
+    items: List["Item"] = Relationship(back_populates="receipt", cascade_delete=True)
     total: float = Field()
 
 
@@ -39,9 +36,9 @@ class Item(SQLModel, table=True):
             the item
 
         price (float): price of the item
-    
+
     """
-    
+
     idx: int = Field(primary_key=True, index=True)
     receipt_id: UUID4 = Field(foreign_key="receipt.id")
     shortDescription: str = Field()
@@ -53,4 +50,3 @@ class Point(SQLModel, table=True):
     idx: int = Field(primary_key=True, index=True)
     id: UUID4 = Field(foreign_key="receipt.id")
     points: int = Field()
-
