@@ -31,19 +31,6 @@ async def process_receipts(
         raise
 
 
-@router.get("/{receipt_id}", response_model=schema.Receipt)
-async def get_receipt_by_id(
-    receipt_id: Annotated[UUID4, Path(description="ID of the receipt")],
-    db_conn: Annotated[Session, Depends(db.get_db)],
-):
-    try:
-        receipt_id = ReceiptService.get_receipt_by_id(db_conn, receipt_id)
-        return receipt_id
-    except Exception as e:
-        logger.error(e)
-        raise
-
-
 @router.get("/{receipt_id}/points", response_model=schema.PointsResponse)
 async def get_receipt_points_by_id(
     receipt_id: Annotated[UUID4, Path(description="ID of the receipt")],
@@ -53,7 +40,7 @@ async def get_receipt_points_by_id(
         points = ReceiptService.get_points_by_id(db_conn, receipt_id)
         return points
     except ElementNotFoundError as e:
-        raise exceptions.HTTP404NotFoundError from e
+        raise exceptions.HTTP404NotFoundError("No receipt found for that ID.")
     except Exception as e:
         logger.error(e)
         raise

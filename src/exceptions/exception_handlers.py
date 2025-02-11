@@ -30,10 +30,12 @@ def setup_api_exceptions(app: FastAPI):
     async def handle_validation_error(request: Request, exc: Exception) -> JSONResponse:
         logger.error("request could not be processed: %s", exc)
         error_message = ""
-        if exc.errors():
-            error_message = (
-                f"{exc.errors()[0].get('msg')}, {exc.errors()[0].get('loc')}"
-            )
+        # if exc.errors():
+        #     error_message = (
+        #         f"{exc.errors()[0].get('msg')}, {exc.errors()[0].get('loc')}"
+        #     )
 
-        code = HTTPStatus.UNPROCESSABLE_ENTITY
-        return JSONResponse(status_code=code, content={"message": error_message})
+        code = HTTPStatus.BAD_REQUEST
+        return JSONResponse(
+            status_code=code, content={"message": "The receipt is invalid."}
+        )

@@ -39,7 +39,7 @@ class ReceiptService:
                 retailer=receipt.retailer,
                 purchaseDate=receipt.purchaseDate,
                 purchaseTime=receipt.purchaseTime,
-                total=receipt.total,
+                total=float(receipt.total),
             )
             receipt_repo.create(db_conn, db_receipt)
             logger.debug("Receipt created: %s", receipt)
@@ -48,7 +48,7 @@ class ReceiptService:
                 db_item = model.Item(
                     receipt_id=receipt.id,
                     shortDescription=item.shortDescription,
-                    price=item.price,
+                    price=float(item.price),
                 )
                 receipt_repo.create(db_conn, db_item)
                 logger.debug("Item created: %s", db_item.idx)
@@ -56,7 +56,7 @@ class ReceiptService:
             logger.error(e)
             raise exceptions.HTTP400BadRequestError from e
         try:
-            points = ReceiptService._process_receipt(receipt)
+            points = ReceiptService._process_receipt(db_receipt)
             db_points = model.Point(id=receipt.id, points=points)
             point_repo.create(db_conn, db_points)
         except Exception as e:

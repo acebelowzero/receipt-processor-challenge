@@ -2,6 +2,8 @@ from pydantic import BaseModel, Field, UUID4
 from datetime import date, time
 from typing import List
 import uuid
+
+
 class Items(BaseModel):
     """Item schema
 
@@ -10,10 +12,11 @@ class Items(BaseModel):
             the item
 
         price (float): price of the item
-    
+
     """
-    shortDescription: str = Field()
-    price: float = Field()
+
+    shortDescription: str = Field(pattern="^[\\w\\s\\-]+$")
+    price: str = Field(pattern="^\\d+\\.\\d{2}$")
 
 
 class Receipt(BaseModel):
@@ -27,12 +30,13 @@ class Receipt(BaseModel):
         items (list[items]): items purchased
         total (float): total spent
     """
+
     id: UUID4 = Field(default_factory=uuid.uuid4)
-    retailer: str = Field()
+    retailer: str = Field(strict=True, pattern="^[\\w\\s\\-&]+$")
     purchaseDate: date = Field()
     purchaseTime: time = Field()
     items: List[Items] = Field()
-    total: float = Field()
+    total: str = Field(pattern="^\\d+\\.\\d{2}$")
 
 
 class CreateReceiptResponse(BaseModel):
