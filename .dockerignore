@@ -1,0 +1,11 @@
+.git
+.vscode
+.gitignore
+Makefile
+README.md
+*.db
+*.log
+.env
+*.json
+*.logs
+**/.DS_Store

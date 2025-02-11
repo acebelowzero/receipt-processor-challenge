@@ -1,0 +1,21 @@
+services:
+  receipt-api:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    env_file:
+      - '../.env'
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT}
+    networks:
+      - receipt-network
+    volumes:
+      - ./logs:/opt/logs/
+    ports:
+      - 8000:8000
+networks:
+  receipt-network:
+    driver: bridge
+    name: receipt-network
+volumes:
+  logs:
