@@ -6,11 +6,11 @@ from sqlalchemy.exc import OperationalError
 from pydantic import UUID4
 import logging
 from .exceptions import ElementNotFoundError, DatabaseConnectionError
+
 logger = logging.getLogger(settings.ENVIRONMENT)
 
 
 T = TypeVar("SQLModel", bound=SQLModel)
-
 
 
 class RepoBase(Generic[T]):
@@ -27,9 +27,8 @@ class RepoBase(Generic[T]):
     def __init__(self, model):
         super().__init__()
         self.model = model
-    
 
-    def create(self, db_conn:Session, data: T):
+    def create(self, db_conn: Session, data: T):
         """
         Creates new record in the database
 
@@ -47,16 +46,14 @@ class RepoBase(Generic[T]):
             raise
         else:
             return data
-        
-    def get_by_id(self, db_conn:Session, id: int | UUID4):
+
+    def get_by_id(self, db_conn: Session, id: int | UUID4):
         logger.debug("Fetching by id: %s", id)
-        
+
         data = db_conn.query(self.model).filter(self.model.id == id).first()
         if data:
             logger.debug("Found %s with ID %s", self.model.__name__, id)
             return data
-        error = f"ID: {id} for model: {self.model.__name__}, not found."
+        error = f"ID: {id} for model: {self.model.__name__} not found."
         logger.error(error)
         raise ElementNotFoundError(error)
-        
-
